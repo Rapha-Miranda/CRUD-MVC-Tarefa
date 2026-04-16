@@ -1,0 +1,12 @@
+{
+ "name": "crud-tarefas",
+ "version": "1.0.0",
+ "description": "CRUD de Tarefas",
+ "main": "main.mjs",
+ "type": "module",
+ "scripts": {
+   "start": "node main.mjs"
+ },
+ "author": "Raphael Avila Miranda",
+ "license": "ISC"
+}
