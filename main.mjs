@@ -5,6 +5,9 @@ const form = document.getElementById('form-tarefa');
 const inputDescricao = document.getElementById('descricao');
 const lista = document.getElementById('lista-tarefas');
 
+let editModalInstance = null;
+let deleteModalInstance = null;
+
 function renderLista() {
   const tarefas = controller.listarTarefas();
 
@@ -40,7 +43,6 @@ form.addEventListener('submit', (e) => {
   }
 });
 
-// Tornar as funções de ação globais para o onclick no HTML
 window.alternarStatus = (id) => {
   controller.alternarConclusao(id);
   renderLista();
@@ -51,23 +53,43 @@ window.editar = (id) => {
   const tarefa = tarefas.find(t => t.id === id);
   if (!tarefa) return;
 
-  const novaDescricao = prompt('Digite o novo nome para a tarefa:', tarefa.descricao);
-  if (novaDescricao !== null && novaDescricao.trim() !== '') {
-    try {
-      controller.atualizarTarefa(id, { descricao: novaDescricao.trim() });
-      renderLista();
-    } catch (err) {
-      alert(err.message);
-    }
+  document.getElementById('edit-tarefa-input').value = tarefa.descricao;
+  document.getElementById('edit-tarefa-id').value = id;
+  
+  if (!editModalInstance) {
+      editModalInstance = new bootstrap.Modal(document.getElementById('editModal'));
   }
+  editModalInstance.show();
 };
+
+document.getElementById('btn-salvar-edicao').addEventListener('click', () => {
+    const id = document.getElementById('edit-tarefa-id').value;
+    const novaDescricao = document.getElementById('edit-tarefa-input').value;
+    
+    if (novaDescricao && novaDescricao.trim() !== '') {
+        try {
+            controller.atualizarTarefa(id, { descricao: novaDescricao.trim() });
+            renderLista();
+            if (editModalInstance) editModalInstance.hide();
+        } catch (err) {
+            alert(err.message);
+        }
+    }
+});
 
 window.excluir = (id) => {
-  if (confirm('Deseja realmente excluir esta tarefa?')) {
-    controller.removerTarefa(id);
-    renderLista();
+  document.getElementById('delete-tarefa-id').value = id;
+  if (!deleteModalInstance) {
+      deleteModalInstance = new bootstrap.Modal(document.getElementById('deleteModal'));
   }
+  deleteModalInstance.show();
 };
 
-// Render inicial
+document.getElementById('btn-confirmar-exclusao').addEventListener('click', () => {
+    const id = document.getElementById('delete-tarefa-id').value;
+    controller.removerTarefa(id);
+    renderLista();
+    if (deleteModalInstance) deleteModalInstance.hide();
+});
+
 document.addEventListener('DOMContentLoaded', renderLista);

@@ -13,12 +13,12 @@ export class TarefaController {
   adicionarTarefa(descricao) {
     const erros = Tarefa.validar(descricao);
     if (erros.length > 0) throw new Error(erros.join(' | '));
-    
+
     const tarefa = new Tarefa(descricao);
     const tarefas = this.service.buscarTodas();
     tarefas.push(tarefa);
     this.service.salvarTodas(tarefas);
-    
+
     return tarefa;
   }
 
@@ -26,7 +26,7 @@ export class TarefaController {
     const tarefas = this.service.buscarTodas();
     const idx = tarefas.findIndex(t => t.id === id);
     if (idx === -1) throw new Error('Tarefa não encontrada');
-    
+
     tarefas[idx] = { ...tarefas[idx], ...novosDados };
     this.service.salvarTodas(tarefas);
   }
